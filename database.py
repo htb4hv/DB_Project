@@ -396,6 +396,24 @@ def describe_and_count_all_tables(cursor):
 
         except Exception as e:
             print(f"Error while processing table '{table_name}':", e)
+
+def print_all_tables_data(cursor):
+    for table_name in tables.keys():
+        try:
+            print(f"\nData from table '{table_name}':")
+            cursor.execute(f"SELECT * FROM {table_name}")
+            rows = cursor.fetchall()
+
+            # Check if the table has data
+            if rows:
+                for row in rows:
+                    print(row)
+            else:
+                print("No data found in this table.")
+
+        except Exception as e:
+            print(f"Error while fetching data from table '{table_name}':", e)
+
 try:
     # Establish the database connection
     conn = mysql.connector.connect(
@@ -418,6 +436,7 @@ try:
         populate_tables(cursor)
 
         describe_and_count_all_tables(cursor)
+        print_all_tables_data(cursor)
 
         # Testing add_entry function
         add_entry(cursor, 'User_Accounts', [6, 'user6', 'pass6', 'Type6'])
