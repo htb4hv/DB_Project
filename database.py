@@ -379,6 +379,23 @@ def get_truck_revenue(cursor, truck_id, event_id):
     except Error as e:
         print("Error while retrieving truck revenue:", e)
 
+def describe_and_count_all_tables(cursor):
+    for table_name in tables.keys():
+        try:
+            # Describe the table schema
+            cursor.execute(f"DESC {table_name}")
+            rows = cursor.fetchall()
+            print(f"\nSchema for table '{table_name}':")
+            for row in rows:
+                print(row)
+
+            # Count the total number of rows in the table
+            cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+            count = cursor.fetchone()[0]
+            print(f"Total number of rows in '{table_name}': {count}")
+
+        except Exception as e:
+            print(f"Error while processing table '{table_name}':", e)
 try:
     # Establish the database connection
     conn = mysql.connector.connect(
@@ -399,6 +416,8 @@ try:
         create_tables(cursor)
         get_all_tables(cursor)
         populate_tables(cursor)
+
+        describe_and_count_all_tables(cursor)
 
         # Testing add_entry function
         add_entry(cursor, 'User_Accounts', [6, 'user6', 'pass6', 'Type6'])
