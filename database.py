@@ -17,7 +17,7 @@ def clear_tables(cursor):
 def create_tables(cursor):
     # SQL commands to execute
     create_table_commands = """
-    
+
     -- User Accounts Table
     CREATE TABLE User_Accounts (
         User_ID INT PRIMARY KEY,
@@ -25,7 +25,7 @@ def create_tables(cursor):
         Password VARCHAR(255) NOT NULL,
         User_Type VARCHAR(255)
     );
-    
+
     -- Event Table
     CREATE TABLE Event (
         Event_ID INT PRIMARY KEY,
@@ -34,7 +34,7 @@ def create_tables(cursor):
         Date DATE,
         Name VARCHAR(255)
     );
-    
+
     -- Food Truck Table
     CREATE TABLE Food_Truck (
         Truck_ID INT PRIMARY KEY,
@@ -46,7 +46,7 @@ def create_tables(cursor):
         FOREIGN KEY (User_ID) REFERENCES User_Accounts(User_ID),
         FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
     );
-    
+
     -- Attendee Table
     CREATE TABLE Attendee (
         Attendee_ID INT PRIMARY KEY,
@@ -58,7 +58,7 @@ def create_tables(cursor):
         FOREIGN KEY (User_ID) REFERENCES User_Accounts(User_ID),
         FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
     );
-    
+
     -- Event Details Table
     CREATE TABLE Event_Details (
         Event_ID INT,
@@ -67,7 +67,7 @@ def create_tables(cursor):
         Event_Rules TEXT,
         FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
     );
-    
+
     -- Feedback & Ratings Table
     CREATE TABLE Feedback_Ratings (
         Feedback_ID INT PRIMARY KEY,
@@ -80,7 +80,7 @@ def create_tables(cursor):
         FOREIGN KEY (Truck_ID) REFERENCES Food_Truck(Truck_ID),
         FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
     );
-    
+
     -- RSVP Table
     CREATE TABLE RSVP (
         RSVP_ID INT PRIMARY KEY,
@@ -91,7 +91,7 @@ def create_tables(cursor):
         FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID),
         FOREIGN KEY (User_ID) REFERENCES User_Accounts(User_ID)
     );
-    
+
     -- Menu Table: has the check constraint for the price
     CREATE TABLE Menu (
         Menu_ID INT PRIMARY KEY,
@@ -101,7 +101,7 @@ def create_tables(cursor):
         CONSTRAINT Price_Above_Zero CHECK (Price >= 0),
         FOREIGN KEY (Truck_ID) REFERENCES Food_Truck(Truck_ID)
     );
-    
+
     -- Menu Items Table
     CREATE TABLE Menu_Items (
         Menu_ID INT,
@@ -110,7 +110,7 @@ def create_tables(cursor):
         Dietary_Info VARCHAR(255),
         FOREIGN KEY (Menu_ID) REFERENCES Menu(Menu_ID)
     );
-    
+
     -- Food Truck Details Table
     CREATE TABLE Food_Truck_Details (
         Truck_ID INT,
@@ -119,7 +119,7 @@ def create_tables(cursor):
         Operational_Hours TEXT,
         FOREIGN KEY (Truck_ID) REFERENCES Food_Truck(Truck_ID)
     );
-    
+
     -- Transactions Table
     CREATE TABLE Transactions (
         Transaction_ID INT PRIMARY KEY,
@@ -140,6 +140,7 @@ def create_tables(cursor):
     # Commit changes
     conn.commit()
 
+
 def get_all_tables(cursor):
     cursor.execute("SHOW TABLES")
 
@@ -148,7 +149,6 @@ def get_all_tables(cursor):
     print("Tables in the database:")
     for table in tables:
         print(table[0])
-
 
 
 def populate_tables(cursor):
@@ -201,7 +201,6 @@ def populate_tables(cursor):
             (4, 'Truck D', '456-789-0123', 'Japanese', 4, 4),
             (5, 'Truck E', '567-890-1234', 'French', 5, 5);
         """)
-
 
     # Feedback_Ratings
     cursor.execute("""
@@ -265,18 +264,19 @@ def populate_tables(cursor):
     conn.commit()
     print("Data inserted successfully into all tables")
 
+
 tables = {
-    'User_Accounts': 4,     # User_ID, Username, Password, User_Type
-    'Event': 5,             # Event_ID, Location, Contact_Info, Date, Name
-    'Food_Truck': 6,        # Truck_ID, Name, Contact_Info, Cuisine_Type, User_ID, Event_ID
-    'Attendee': 6,          # Attendee_ID, Name, Email, Phone_Number, User_ID, Event_ID
-    'Event_Details': 4,     # Event_ID, Detail_ID, Specific_Instructions, Event_Rules
+    'User_Accounts': 4,  # User_ID, Username, Password, User_Type
+    'Event': 5,  # Event_ID, Location, Contact_Info, Date, Name
+    'Food_Truck': 6,  # Truck_ID, Name, Contact_Info, Cuisine_Type, User_ID, Event_ID
+    'Attendee': 6,  # Attendee_ID, Name, Email, Phone_Number, User_ID, Event_ID
+    'Event_Details': 4,  # Event_ID, Detail_ID, Specific_Instructions, Event_Rules
     'Feedback_Ratings': 6,  # Feedback_ID, Comments, Rating, Attendee_ID, Truck_ID, Event_ID
-    'RSVP': 4,              # RSVP_ID, Attendee_ID, Event_ID, User_ID
-    'Menu': 4,              # Menu_ID, Item_Name, Truck_ID, Price
-    'Menu_Items': 4,        # Menu_ID, Item_ID, Description, Dietary_Info
-    'Food_Truck_Details': 4,# Truck_ID, Detail_ID, Owner_Details, Operational_Hours
-    'Transactions': 5       # Transaction_ID, Attendee_ID, Event_ID, Amount, Transaction_Date
+    'RSVP': 4,  # RSVP_ID, Attendee_ID, Event_ID, User_ID
+    'Menu': 4,  # Menu_ID, Item_Name, Truck_ID, Price
+    'Menu_Items': 4,  # Menu_ID, Item_ID, Description, Dietary_Info
+    'Food_Truck_Details': 4,  # Truck_ID, Detail_ID, Owner_Details, Operational_Hours
+    'Transactions': 5  # Transaction_ID, Attendee_ID, Event_ID, Amount, Transaction_Date
 }
 
 table_pk = {
@@ -294,7 +294,7 @@ table_pk = {
 }
 
 
-def add_entry(curser, table_name, args = []):
+def add_entry(curser, table_name, args=[]):
     if table_name in tables and tables[table_name] == len(args):
         # Create placeholders for the values
         placeholders = ', '.join(['%s'] * len(args))
@@ -307,6 +307,7 @@ def add_entry(curser, table_name, args = []):
     else:
         print(f"Error: The number of arguments does not match the number of columns in '{table_name}'.")
 
+
 def delete_entry(cursor, table_name, primary_key_value):
     if table_name in tables:
         # Assuming the primary key is the first column
@@ -315,6 +316,7 @@ def delete_entry(cursor, table_name, primary_key_value):
         cursor.execute(delete_query, (primary_key_value,))
     else:
         print(f"Error: Table '{table_name}' not found.")
+
 
 def get_entry(cursor, table_name, primary_key_value):
     if table_name in tables:
@@ -325,18 +327,22 @@ def get_entry(cursor, table_name, primary_key_value):
     else:
         print(f"Error: Table '{table_name}' not found.")
 
-def update_entry(cursor, table_name, primary_key_value, update_values = []):
+
+def update_entry(cursor, table_name, primary_key_value, update_values=[]):
     if table_name in tables and len(update_values) == tables[table_name] - 1:
         # Construct the SET part of the SQL query
-        set_values = ', '.join([f"{column} = %s" for column in update_values])
-        
+        set_values = ', '.join([f"{column} = %s" for column in update_values.keys()])
+
         # Assuming the primary key is the first column
         primary_key_column = table_pk[table_name]  # This is the actual primary key column name
         update_query = f"UPDATE {table_name} SET {set_values} WHERE {primary_key_column} = %s"
         print("test")
+
+        # Prepare the values for the SQL query
+        update_values_list = list(update_values.values()) + [primary_key_value]
+
         # Execute the update query with parameters
-        # cursor.execute(update_query, (primary_key_value,), tuple(update_values))
-        cursor.execute(update_query, (primary_key_value,), tuple(update_values))
+        cursor.execute(update_query, update_values_list)
         conn.commit()  # Commit the transaction
         print("Entry updated successfully.")
     else:
@@ -344,26 +350,17 @@ def update_entry(cursor, table_name, primary_key_value, update_values = []):
 
 def get_truck_revenue(cursor, truck_id, event_id):
     try:
+        # Drop the stored procedure if it already exists
+        cursor.execute("DROP PROCEDURE IF EXISTS CalculateTotalRevenue")
+
         # Define the SQL code to create the stored procedure
         create_stored_procedure_query = """
-        DELIMITER //
-
         CREATE PROCEDURE CalculateTotalRevenue (IN truck_id INT, IN event_id INT, OUT total DECIMAL(10, 2))
         BEGIN
             SELECT SUM(Amount) INTO total
             FROM Transactions
-            WHERE Event_ID = event_id AND Attendee_ID IN (
-                SELECT Attendee_ID
-                FROM RSVP
-                WHERE Event_ID = event_id AND User_ID = (
-                    SELECT User_ID
-                    FROM Food_Truck
-                    WHERE Truck_ID = truck_id
-                )
-            );
-        END //
-
-        DELIMITER ;
+            WHERE Truck_ID = truck_id AND Event_ID = event_id;
+        END
         """
 
         # Execute the SQL code to create the stored procedure
@@ -372,8 +369,11 @@ def get_truck_revenue(cursor, truck_id, event_id):
 
         # Execute the stored procedure to retrieve truck revenue
         cursor.callproc("CalculateTotalRevenue", [truck_id, event_id, 0])
+
+        # Fetch the result of the stored procedure
         cursor.execute("SELECT @total")
         total_revenue = cursor.fetchone()[0]
+
         return total_revenue
 
     except Error as e:
@@ -408,7 +408,7 @@ try:
         print(cursor.fetchall())  # This should print the entry with User_ID = 6
 
         # Testing update_entry function
-        update_entry(cursor, 'User_Accounts', 6, ['user7', 'pass7', 'Type7'])
+        update_entry(cursor, 'User_Accounts', 6, {'username': 'user7', 'password': 'pass7', 'user_type': 'Type7'})
         # get_entry(cursor, 'User_Accounts', 6)
         # print(cursor.fetchall())  # This should print the entry with User_ID = 6 updated
 
@@ -432,9 +432,6 @@ try:
 
 except Error as e:
     print("Error while connecting to MySQL:", e)
-
-
-
 
 """
 finally:
