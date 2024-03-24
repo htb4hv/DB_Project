@@ -21,8 +21,8 @@ def create_tables(cursor):
     -- User Accounts Table
     CREATE TABLE User_Accounts (
         User_ID INT PRIMARY KEY,
-        Username VARCHAR(255),
-        Password VARCHAR(255),
+        Username VARCHAR(255) NOT NULL,
+        Password VARCHAR(255) NOT NULL,
         User_Type VARCHAR(255)
     );
     
@@ -92,12 +92,13 @@ def create_tables(cursor):
         FOREIGN KEY (User_ID) REFERENCES User_Accounts(User_ID)
     );
     
-    -- Menu Table
+    -- Menu Table: has the check constraint for the price
     CREATE TABLE Menu (
         Menu_ID INT PRIMARY KEY,
         Item_Name VARCHAR(255),
         Truck_ID INT,
         Price DECIMAL(10, 2),
+        CONSTRAINT Price_Above_Zero CHECK (Price >= 0),
         FOREIGN KEY (Truck_ID) REFERENCES Food_Truck(Truck_ID)
     );
     
@@ -309,11 +310,74 @@ def add_entry(curser, table_name, args = []):
 def delete_entry(cursor, table_name, primary_key_value):
     if table_name in tables:
         # Assuming the primary key is the first column
-        primary_key_column = table_pk[table_name]  # Replace 'ID' with your actual primary key column name
+        primary_key_column = table_pk[table_name]  # This is the actual primary key column name
         delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
         cursor.execute(delete_query, (primary_key_value,))
     else:
         print(f"Error: Table '{table_name}' not found.")
+
+def get_entry(cursor, table_name, primary_key_value):
+    if table_name in tables:
+        # Assuming the primary key is the first column
+        primary_key_column = table_pk[table_name]  # This is the actual primary key column name
+        get_query = f"SELECT * FROM {table_name} WHERE {primary_key_column} = %s"
+        cursor.execute(get_query, (primary_key_value,))
+    else:
+        print(f"Error: Table '{table_name}' not found.")
+
+def update_entry(cursor, table_name, primary_key_value, update_values = []):
+    if table_name in tables and len(update_values) == tables[table_name] - 1:
+        # Construct the SET part of the SQL query
+        set_values = ', '.join([f"{column} = %s" for column in update_values])
+        
+        # Assuming the primary key is the first column
+        primary_key_column = table_pk[table_name]  # This is the actual primary key column name
+        update_query = f"UPDATE {table_name} SET {set_values} WHERE {primary_key_column} = %s"
+        print("test")
+        # Execute the update query with parameters
+        # cursor.execute(update_query, (primary_key_value,), tuple(update_values))
+        cursor.execute(update_query, (primary_key_value,), tuple(update_values))
+        conn.commit()  # Commit the transaction
+        print("Entry updated successfully.")
+    else:
+        print(f"Error: Table '{table_name}' not found or incorrect number of update values.")
+
+def get_truck_revenue(cursor, truck_id, event_id):
+    try:
+        # Define the SQL code to create the stored procedure
+        create_stored_procedure_query = """
+        DELIMITER //
+
+        CREATE PROCEDURE CalculateTotalRevenue (IN truck_id INT, IN event_id INT, OUT total DECIMAL(10, 2))
+        BEGIN
+            SELECT SUM(Amount) INTO total
+            FROM Transactions
+            WHERE Event_ID = event_id AND Attendee_ID IN (
+                SELECT Attendee_ID
+                FROM RSVP
+                WHERE Event_ID = event_id AND User_ID = (
+                    SELECT User_ID
+                    FROM Food_Truck
+                    WHERE Truck_ID = truck_id
+                )
+            );
+        END //
+
+        DELIMITER ;
+        """
+
+        # Execute the SQL code to create the stored procedure
+        cursor.execute(create_stored_procedure_query)
+        print("Stored procedure CalculateTotalRevenue created successfully")
+
+        # Execute the stored procedure to retrieve truck revenue
+        cursor.callproc("CalculateTotalRevenue", [truck_id, event_id, 0])
+        cursor.execute("SELECT @total")
+        total_revenue = cursor.fetchone()[0]
+        return total_revenue
+
+    except Error as e:
+        print("Error while retrieving truck revenue:", e)
 
 try:
     # Establish the database connection
@@ -335,6 +399,36 @@ try:
         create_tables(cursor)
         get_all_tables(cursor)
         populate_tables(cursor)
+
+        # Testing add_entry function
+        add_entry(cursor, 'User_Accounts', [6, 'user6', 'pass6', 'Type6'])
+
+        # Testing get_entry function
+        get_entry(cursor, 'User_Accounts', 6)
+        print(cursor.fetchall())  # This should print the entry with User_ID = 6
+
+        # Testing update_entry function
+        update_entry(cursor, 'User_Accounts', 6, ['user7', 'pass7', 'Type7'])
+        # get_entry(cursor, 'User_Accounts', 6)
+        # print(cursor.fetchall())  # This should print the entry with User_ID = 6 updated
+
+        # Testing delete_entry function
+        delete_entry(cursor, 'User_Accounts', 6)
+
+        # Verification: Check if the entry has been deleted
+        get_entry(cursor, 'User_Accounts', 6)
+        result = cursor.fetchall()
+        if not result:
+            print("Entry with User_ID = 6 has been successfully deleted.")
+        else:
+            print("Error: Entry with User_ID = 6 still exists after deletion.")
+
+        # Need to insert values into truck table and event table
+        # Testing get_truck_revenue function
+        truck_id = 1
+        event_id = 1
+        revenue = get_truck_revenue(cursor, truck_id, event_id)
+        print(f"Total revenue for truck {truck_id} at event {event_id}: ${revenue}")
 
 except Error as e:
     print("Error while connecting to MySQL:", e)
