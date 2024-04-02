@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Events</title>
+</head>
+<body>
+    <h1>Upcoming Events</h1>
+
+    <!-- Check if there are any events -->
+    {% if events %}
+        <ul>
+            {% for event in events %}
+                <li>
+                    <strong>{{ event.Name }}</strong><br>
+                    Location: {{ event.Location }}<br>
+                    Date: {{ event.Date }}<br>
+                    Contact Info: {{ event.Contact_Info }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No upcoming events found.</p>
+    {% endif %}
+</body>
+</html>
