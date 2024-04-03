@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 from mysql.connector import Error
+import database as db
 
 app = Flask(__name__)
 
@@ -45,12 +46,16 @@ def add_user():
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO User_Accounts (Username, Password, User_Type) VALUES (%s, %s, %s)",
-                       (username, password, user_type))
-        conn.commit()
+
+        # Call the add_entry function to add the new user to the database
+        db.clear_tables(conn, cursor)
+        db.create_tables(conn, cursor)
+        db.add_entry(conn, cursor, 'User_Accounts', {'Username': username, 'Password': password, 'User_Type': user_type})
+        db.describe_and_count_all_tables(cursor)
+        db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('list_user_accounts'))
+        return redirect(url_for('index'))
 
     return render_template('add_user.html')
 
