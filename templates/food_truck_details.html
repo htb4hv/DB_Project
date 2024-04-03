@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Truck Details</title>
+</head>
+<body>
+    <h1>Food Truck Details</h1>
+    <form action="/food_truck_details" method="post">
+        <label for="truck_id">Truck ID:</label>
+        <input type="number" id="truck_id" name="truck_id" required><br><br>
+
+        <label for="detail_id">Detail ID:</label>
+        <input type="number" id="detail_id" name="detail_id" required><br><br>
+
+        <label for="owner_details">Owner Details:</label>
+        <textarea id="owner_details" name="owner_details"></textarea><br><br>
+
+        <label for="operational_hours">Operational Hours:</label>
+        <input type="text" id="operational_hours" name="operational_hours"><br><br>
+
+        <input type="submit" value="Submit Details">
+    </form>
+</body>
+</html>

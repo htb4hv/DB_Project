@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Menu Item Details</title>
+</head>
+<body>
+    <h1>Edit Menu Item Details</h1>
+    <form action="/edit_menu_item_details" method="post">
+        <label for="item_id">Item ID:</label>
+        <input type="number" id="item_id" name="item_id" required><br><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea><br><br>
+
+        <label for="dietary_info">Dietary Info:</label>
+        <input type="text" id="dietary_info" name="dietary_info"><br><br>
+
+        <input type="submit" value="Update Item Details">
+    </form>
+</body>
+</html>
