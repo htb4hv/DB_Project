@@ -30,7 +30,7 @@ def create_tables(conn, cursor):
 
     -- Event Table
     CREATE TABLE Event (
-        Event_ID INT PRIMARY KEY,
+        Event_ID INT AUTO_INCREMENT PRIMARY KEY,
         Location VARCHAR(255),
         Contact_Info VARCHAR(255),
         Date DATE,
@@ -39,7 +39,7 @@ def create_tables(conn, cursor):
 
     -- Food Truck Table
     CREATE TABLE Food_Truck (
-        Truck_ID INT PRIMARY KEY,
+        Truck_ID INT AUTO_INCREMENT PRIMARY KEY,
         Name VARCHAR(255),
         Contact_Info VARCHAR(255),
         Cuisine_Type VARCHAR(255),
@@ -51,7 +51,7 @@ def create_tables(conn, cursor):
 
     -- Attendee Table
     CREATE TABLE Attendee (
-        Attendee_ID INT PRIMARY KEY,
+        Attendee_ID INT AUTO_INCREMENT PRIMARY KEY,
         Name VARCHAR(255),
         Email VARCHAR(255),
         Phone_Number VARCHAR(255),
@@ -96,7 +96,7 @@ def create_tables(conn, cursor):
 
     -- Menu Table: has the check constraint for the price
     CREATE TABLE Menu (
-        Menu_ID INT PRIMARY KEY,
+        Menu_ID INT AUTO_INCREMENT PRIMARY KEY,
         Item_Name VARCHAR(255),
         Truck_ID INT,
         Price DECIMAL(10, 2),
@@ -420,65 +420,67 @@ def print_all_tables_data(cursor):
         except Exception as e:
             print(f"Error while fetching data from table '{table_name}':", e)
 
-# try:
-#     # Establish the database connection
-#     conn = mysql.connector.connect(
-#         host='34.150.151.166',
-#         user='root',
-#         passwd='Database123!',
-#         database='4750_project'
-#     )
+if __name__ == '__main__':
+    # try:
+    #     # Establish the database connection
+    #     conn = mysql.connector.connect(
+    #         host='34.150.151.166',
+    #         user='root',
+    #         passwd='Database123!',
+    #         database='4750_project'
+    #     )
 
-#     # Check if the connection was successful
-#     if conn.is_connected():
-#         print("Successfully connected to the database")
+    #     # Check if the connection was successful
+    #     if conn.is_connected():
+    #         print("Successfully connected to the database")
 
-#         # Create a cursor object
-#         cursor = conn.cursor()
-#         clear_tables(cursor)
-#         get_all_tables(cursor)
-#         create_tables(cursor)
-#         get_all_tables(cursor)
-#         populate_tables(cursor)
+    #         # Create a cursor object
+    #         cursor = conn.cursor()
+    #         clear_tables(cursor)
+    #         get_all_tables(cursor)
+    #         create_tables(cursor)
+    #         get_all_tables(cursor)
+    #         populate_tables(cursor)
 
-#         describe_and_count_all_tables(cursor)
-#         print_all_tables_data(cursor)
+    #         describe_and_count_all_tables(cursor)
+    #         print_all_tables_data(cursor)
 
-#         # Testing add_entry function
-#         add_entry(cursor, 'User_Accounts', [6, 'user6', 'pass6', 'Type6'])
+    #         # Testing add_entry function
+    #         add_entry(cursor, 'User_Accounts', [6, 'user6', 'pass6', 'Type6'])
 
-#         # Testing get_entry function
-#         get_entry(cursor, 'User_Accounts', 6)
-#         print(cursor.fetchall())  # This should print the entry with User_ID = 6
+    #         # Testing get_entry function
+    #         get_entry(cursor, 'User_Accounts', 6)
+    #         print(cursor.fetchall())  # This should print the entry with User_ID = 6
 
-#         # Testing update_entry function
-#         update_entry(cursor, 'User_Accounts', 6, {'username': 'user7', 'password': 'pass7', 'user_type': 'Type7'})
-#         # get_entry(cursor, 'User_Accounts', 6)
-#         # print(cursor.fetchall())  # This should print the entry with User_ID = 6 updated
+    #         # Testing update_entry function
+    #         update_entry(cursor, 'User_Accounts', 6, {'username': 'user7', 'password': 'pass7', 'user_type': 'Type7'})
+    #         # get_entry(cursor, 'User_Accounts', 6)
+    #         # print(cursor.fetchall())  # This should print the entry with User_ID = 6 updated
 
-#         # Testing delete_entry function
-#         delete_entry(cursor, 'User_Accounts', 6)
+    #         # Testing delete_entry function
+    #         delete_entry(cursor, 'User_Accounts', 6)
 
-#         # Verification: Check if the entry has been deleted
-#         get_entry(cursor, 'User_Accounts', 6)
-#         result = cursor.fetchall()
-#         if not result:
-#             print("Entry with User_ID = 6 has been successfully deleted.")
-#         else:
-#             print("Error: Entry with User_ID = 6 still exists after deletion.")
+    #         # Verification: Check if the entry has been deleted
+    #         get_entry(cursor, 'User_Accounts', 6)
+    #         result = cursor.fetchall()
+    #         if not result:
+    #             print("Entry with User_ID = 6 has been successfully deleted.")
+    #         else:
+    #             print("Error: Entry with User_ID = 6 still exists after deletion.")
 
-#         # Need to insert values into truck table and event table
-#         # Testing get_truck_revenue function
-#         truck_id = 1
-#         event_id = 1
-#         revenue = get_truck_revenue(cursor, truck_id, event_id)
-#         print(f"Total revenue for truck {truck_id} at event {event_id}: ${revenue}")
+    #         # Need to insert values into truck table and event table
+    #         # Testing get_truck_revenue function
+    #         truck_id = 1
+    #         event_id = 1
+    #         revenue = get_truck_revenue(cursor, truck_id, event_id)
+    #         print(f"Total revenue for truck {truck_id} at event {event_id}: ${revenue}")
 
-# except Error as e:
-#     print("Error while connecting to MySQL:", e)
+    # except Error as e:
+    #     print("Error while connecting to MySQL:", e)
 
-"""
-finally:
-    cursor.close()
-    conn.close()
-"""
+    """
+    finally:
+        cursor.close()
+        conn.close()
+    """
+

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 from mysql.connector import Error
-import database as db
+from DB_Project import database as db
 
 app = Flask(__name__)
 
@@ -77,8 +77,23 @@ def view_upcoming_events():
 @app.route('/register_truck', methods=['GET', 'POST'])
 def register_truck():
     if request.method == 'POST':
-        truck_id = request.form['truck_id']
-        event_id = request.form['event_id']
+        name = request.form['name']
+        contact_info = request.form['contact_info']
+        cuisine_type = request.form['cuisine_type']
+        user_id = request.form['user_id']
+        event_id = request.form.get('event_id') or None  # Optional field, set to None if not provided
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Call the add_entry function to add the new user to the database
+        db.add_entry(conn, cursor, 'Food_Truck',
+                     {'Name': name, 'Contact_Info': contact_info, 'Cuisine_Type': cuisine_type, 'User_ID':user_id, 'Event_ID':event_id})
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
 
 
     # Load the registration form
@@ -88,9 +103,26 @@ def register_truck():
 @app.route('/register_attendee', methods=['GET', 'POST'])
 def register_attendee():
     if request.method == 'POST':
-        attendee_id = request.form['attendee_id']
+        name = request.form['name']
+        email = request.form['email']
+        phone_number = request.form['phone_number']
+        user_id = request.form.get('user_id') or None  # Optional field
         event_id = request.form['event_id']
 
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        db.add_entry(conn, cursor, 'Attendee',
+                     {'Name': name,
+                    'Email': email,
+                    'Phone_Number': phone_number,
+                    'User_ID': user_id,  # Handle None for optional User_ID
+                    'Event_ID': event_id})
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
 
     # Load the registration form
     return render_template('register_attendee.html')
@@ -101,20 +133,20 @@ def create_event():
     if request.method == 'POST':
         location = request.form['location']
         contact_info = request.form['contact_info']
-        date = request.form['date']
+        event_date = request.form['date']
         name = request.form['name']
 
         conn = get_db_connection()
-        if conn is not None:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO Event (Location, Contact_Info, Date, Name) VALUES (%s, %s, %s, %s)",
-                           (location, contact_info, date, name))
-            conn.commit()
-            cursor.close()
-            conn.close()
-            return redirect(url_for('view_upcoming_events'))  # Redirect to the events view
-        else:
-            return "Failed to connect to the database"
+        cursor = conn.cursor()
+
+        db.add_entry(conn, cursor, 'Food_Truck',
+                     {'Location': location, 'Contact_Info': contact_info, 'Date': event_date, 'Name': name
+                      })
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
 
     return render_template('create_events.html')
 
@@ -149,30 +181,24 @@ def submit_feedback():
     return render_template('feedback.html')
 
 @app.route('/add_menu', methods=['GET', 'POST'])
-def add_menu_item():
+def add_menu():
     if request.method == 'POST':
         item_name = request.form['item_name']
         truck_id = request.form['truck_id']
         price = request.form['price']
 
         conn = get_db_connection()
-        if conn is not None:
-            cursor = conn.cursor()
-            try:
-                cursor.execute("""
-                    INSERT INTO Menu (Item_Name, Truck_ID, Price) 
-                    VALUES (%s, %s, %s)
-                    """, (item_name, truck_id, price))
-                conn.commit()
-                message = "Menu item added successfully."
-            except mysql.connector.Error as e:
-                message = f"Error adding menu item: {e}"
-            finally:
-                cursor.close()
-                conn.close()
-            return message
-        else:
-            return "Failed to connect to the database"
+        cursor = conn.cursor()
+
+        db.add_entry(conn, cursor, 'Menu',
+                     {'Item_Name': item_name, 'Truck_ID': truck_id, 'price': price
+                      })
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
+
 
     return render_template('add_menu.html')
 
