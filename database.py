@@ -107,7 +107,7 @@ def create_tables(conn, cursor):
     -- Menu Items Table
     CREATE TABLE Menu_Items (
         Menu_ID INT,
-        Item_ID INT PRIMARY KEY,
+        Item_ID INT AUTO_INCREMENT PRIMARY KEY,
         Description TEXT,
         Dietary_Info VARCHAR(255),
         FOREIGN KEY (Menu_ID) REFERENCES Menu(Menu_ID)

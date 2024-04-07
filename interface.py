@@ -139,7 +139,7 @@ def create_event():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        db.add_entry(conn, cursor, 'Food_Truck',
+        db.add_entry(conn, cursor, 'Event',
                      {'Location': location, 'Contact_Info': contact_info, 'Date': event_date, 'Name': name
                       })
 
@@ -205,29 +205,21 @@ def add_menu():
 @app.route('/edit_menu_item', methods=['GET', 'POST'])
 def edit_menu_item_details():
     if request.method == 'POST':
-        item_id = request.form['item_id']
+        menu_id = request.form['menu_id']
         description = request.form['description']
         dietary_info = request.form['dietary_info']
 
         conn = get_db_connection()
-        if conn is not None:
-            cursor = conn.cursor()
-            try:
-                cursor.execute("""
-                    UPDATE Menu_Items
-                    SET Description = %s, Dietary_Info = %s
-                    WHERE Item_ID = %s
-                    """, (description, dietary_info, item_id))
-                conn.commit()
-                message = "Menu item details updated successfully."
-            except mysql.connector.Error as e:
-                message = f"Error updating menu item details: {e}"
-            finally:
-                cursor.close()
-                conn.close()
-            return message
-        else:
-            return "Failed to connect to the database"
+        cursor = conn.cursor()
+
+        db.add_entry(conn, cursor, 'Menu_Items',
+                     {'Menu_ID': menu_id, 'Description': description, 'dietary_info': dietary_info
+                      })
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
 
     return render_template('edit_menu_item.html')
 
