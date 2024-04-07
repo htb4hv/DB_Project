@@ -64,7 +64,7 @@ def create_tables(conn, cursor):
     -- Event Details Table
     CREATE TABLE Event_Details (
         Event_ID INT,
-        Detail_ID INT PRIMARY KEY,
+        Detail_ID INT AUTO_INCREMENT PRIMARY KEY,
         Specific_Instructions TEXT,
         Event_Rules TEXT,
         FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
@@ -72,7 +72,7 @@ def create_tables(conn, cursor):
 
     -- Feedback & Ratings Table
     CREATE TABLE Feedback_Ratings (
-        Feedback_ID INT PRIMARY KEY,
+        Feedback_ID INT AUTO_INCREMENT PRIMARY KEY,
         Comments TEXT,
         Rating INT,
         Attendee_ID INT,
@@ -85,7 +85,7 @@ def create_tables(conn, cursor):
 
     -- RSVP Table
     CREATE TABLE RSVP (
-        RSVP_ID INT PRIMARY KEY,
+        RSVP_ID INT AUTO_INCREMENT PRIMARY KEY,
         Attendee_ID INT,
         Event_ID INT,
         User_ID INT,
@@ -116,7 +116,7 @@ def create_tables(conn, cursor):
     -- Food Truck Details Table
     CREATE TABLE Food_Truck_Details (
         Truck_ID INT,
-        Detail_ID INT PRIMARY KEY,
+        Detail_ID INT AUTO_INCREMENT PRIMARY KEY,
         Owner_Details TEXT,
         Operational_Hours TEXT,
         FOREIGN KEY (Truck_ID) REFERENCES Food_Truck(Truck_ID)
@@ -124,7 +124,7 @@ def create_tables(conn, cursor):
 
     -- Transactions Table
     CREATE TABLE Transactions (
-        Transaction_ID INT PRIMARY KEY,
+        Transaction_ID INT AUTO_INCREMENT PRIMARY KEY,
         Attendee_ID INT,
         Event_ID INT,
         Amount DECIMAL(10, 2),

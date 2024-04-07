@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 from mysql.connector import Error
-from DB_Project import database as db
+import database as db
 
 app = Flask(__name__)
 
@@ -160,23 +160,16 @@ def submit_feedback():
         event_id = request.form.get('event_id')
 
         conn = get_db_connection()
-        if conn is not None:
-            cursor = conn.cursor()
-            try:
-                cursor.execute("""
-                    INSERT INTO Feedback_Ratings (Comments, Rating, Attendee_ID, Truck_ID, Event_ID) 
-                    VALUES (%s, %s, %s, %s, %s)
-                    """, (comments, rating, attendee_id, truck_id, event_id))
-                conn.commit()
-                message = "Feedback submitted successfully."
-            except mysql.connector.Error as e:
-                message = f"Error submitting feedback: {e}"
-            finally:
-                cursor.close()
-                conn.close()
-            return message  # Or redirect to a confirmation/thank you page
-        else:
-            return "Failed to connect to the database"
+        cursor = conn.cursor()
+
+        db.add_entry(conn, cursor, 'Feedback_Ratings',
+                     {'Comments': comments, 'Rating': rating, 'Attendee_ID': attendee_id, 'Truck_ID': truck_id, 'Event_ID': event_id
+                      })
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
 
     return render_template('feedback.html')
 
@@ -228,31 +221,20 @@ def edit_menu_item_details():
 def food_truck_details():
     if request.method == 'POST':
         truck_id = request.form['truck_id']
-        detail_id = request.form['detail_id']
         owner_details = request.form['owner_details']
         operational_hours = request.form['operational_hours']
 
         conn = get_db_connection()
-        if conn is not None:
-            cursor = conn.cursor()
-            try:
-                cursor.execute("""
-                    INSERT INTO Food_Truck_Details (Truck_ID, Detail_ID, Owner_Details, Operational_Hours) 
-                    VALUES (%s, %s, %s, %s)
-                    ON DUPLICATE KEY UPDATE
-                    Owner_Details = VALUES(Owner_Details), 
-                    Operational_Hours = VALUES(Operational_Hours)
-                    """, (truck_id, detail_id, owner_details, operational_hours))
-                conn.commit()
-                message = "Food truck details added/updated successfully."
-            except mysql.connector.Error as e:
-                message = f"Error processing food truck details: {e}"
-            finally:
-                cursor.close()
-                conn.close()
-            return message
-        else:
-            return "Failed to connect to the database"
+        cursor = conn.cursor()
+
+        db.add_entry(conn, cursor, 'Food_Truck_Details',
+                     {'Truck_ID': truck_id, 'Owner_Details': owner_details, 'Operational_Hours': operational_hours
+                      })
+
+        db.print_all_tables_data(cursor)
+        cursor.close()
+        conn.close()
+        return redirect(url_for('index'))
 
     return render_template('food_truck_details.html')
 
