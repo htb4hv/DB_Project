@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import Error
 import database as db
@@ -44,13 +45,16 @@ def add_user():
         password = request.form['password']
         user_type = request.form['user_type']
 
+        # Hash the password
+        hashed_password = generate_password_hash(password)
+
         conn = get_db_connection()
         cursor = conn.cursor()
 
         # Call the add_entry function to add the new user to the database
         db.clear_tables(conn, cursor)
         db.create_tables(conn, cursor)
-        db.add_entry(conn, cursor, 'User_Accounts', {'Username': username, 'Password': password, 'User_Type': user_type})
+        db.add_entry(conn, cursor, 'User_Accounts', {'Username': username, 'Password': hashed_password, 'User_Type': user_type})
         db.describe_and_count_all_tables(cursor)
         db.print_all_tables_data(cursor)
         cursor.close()
