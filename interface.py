@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 import mysql.connector
 from mysql.connector import Error
 import database as db
@@ -20,11 +21,19 @@ def get_db_connection():
         print("Error while connecting to MySQL:", e)
         return None
 
-
 @app.route('/')
-def index():
-    return render_template('index.html')
-
+def home():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT Event_ID, Name, Location, Date, Contact_Info FROM Event')
+    raw_events = cursor.fetchall()
+    events = [
+        (event[0], event[1], event[2], event[3].strftime('%Y-%m-%d'), event[4]) if isinstance(event[3], datetime) else event
+        for event in raw_events
+    ]
+    cursor.close()
+    conn.close()
+    return render_template('home.html', events=events)
 
 @app.route('/user_accounts')
 def list_user_accounts():
@@ -62,6 +71,13 @@ def add_user():
         return redirect(url_for('index'))
 
     return render_template('add_user.html')
+
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+
 
 # Route to view upcoming events
 @app.route('/upcoming_events')
