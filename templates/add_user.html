@@ -18,7 +18,12 @@
 
         <!-- User Type -->
         <label for="user_type">User Type:</label>
-        <input type="text" id="user_type" name="user_type"><br><br>
+        <select id="user_type" name="user_type" required>
+            <option value="">Select a Role</option>
+            <option value="Food Truck Owner">Food Truck Owner</option>
+            <option value="Event Manager">Event Manager</option>
+            <option value="Attendee">Attendee</option>  <!-- New user type option -->
+        </select><br><br>
 
         <input type="submit" value="Add User">
     </form>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import mysql.connector
@@ -6,6 +6,8 @@ from mysql.connector import Error
 import database as db
 
 app = Flask(__name__)
+app.secret_key = 'Database_Project_2024'  # Needed for session management
+
 
 
 def get_db_connection():
@@ -34,6 +36,30 @@ def home():
     cursor.close()
     conn.close()
     return render_template('home.html', events=events)
+
+
+@app.route('/list_attendees')
+def list_attendees():
+    if 'role' not in session or session['role'] != 'Event Manager':
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('dashboard'))
+
+    conn = get_db_connection()
+    if conn is None:
+        flash('Failed to connect to the database', 'error')
+        return redirect(url_for('dashboard'))
+
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT a.Attendee_ID, a.Name, a.Email, a.Phone_Number, e.Name AS Event_Name
+        FROM Attendee AS a
+        JOIN Event AS e ON a.Event_ID = e.Event_ID
+        ORDER BY e.Date DESC, a.Name
+    """)
+    attendees = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('list_attendees.html', attendees=attendees)
 
 @app.route('/user_accounts')
 def list_user_accounts():
@@ -77,6 +103,46 @@ def add_user():
 def index():
     return render_template('index.html')
 
+def check_user_credentials(username, password):
+    conn = get_db_connection()
+    if conn is None:
+        return None
+    cursor = conn.cursor()
+
+    try:
+        # SQL query to find the user with the given username
+        query = "SELECT User_ID, Username, Password, User_Type FROM User_Accounts WHERE Username = %s"
+        cursor.execute(query, (username,))
+        user = cursor.fetchone()
+
+        if user and check_password_hash(user[2], password):
+            return {
+                'User_ID': user[0],
+                'Username': user[1],
+                'User_Type': user[3]
+            }
+        return None
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = check_user_credentials(username, password)
+        if user:
+            session['username'] = user['Username']
+            session['user_id'] = user['User_ID']
+            session['role'] = user['User_Type']
+            flash('Login successful!', category='success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid username or password', category='error')
+
+    return render_template('login.html')
 
 
 # Route to view upcoming events
@@ -92,6 +158,12 @@ def view_upcoming_events():
         return render_template('upcoming_events.html', events=events)
     else:
         return "Failed to connect to the database"
+
+@app.route('/dashboard')
+def dashboard():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html')
 
 # Route for food truck registration for an event
 @app.route('/register_truck', methods=['GET', 'POST'])
@@ -170,9 +242,15 @@ def create_event():
 
     return render_template('create_events.html')
 
+
 @app.route('/submit_feedback', methods=['GET', 'POST'])
 def submit_feedback():
+    if 'role' not in session or session['role'] != 'Attendee':
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('dashboard'))
+
     if request.method == 'POST':
+        # Extract feedback data from form
         comments = request.form.get('comments')
         rating = request.form.get('rating')
         attendee_id = request.form.get('attendee_id')
@@ -182,16 +260,19 @@ def submit_feedback():
         conn = get_db_connection()
         cursor = conn.cursor()
 
+        # Add the feedback to the database
         db.add_entry(conn, cursor, 'Feedback_Ratings',
-                     {'Comments': comments, 'Rating': rating, 'Attendee_ID': attendee_id, 'Truck_ID': truck_id, 'Event_ID': event_id
-                      })
+                     {'Comments': comments, 'Rating': rating, 'Attendee_ID': attendee_id, 'Truck_ID': truck_id,
+                      'Event_ID': event_id})
 
-        db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        flash('Feedback submitted successfully!', 'success')
+        return redirect(url_for('dashboard'))
 
+    # Load the feedback form
     return render_template('feedback.html')
+
 
 @app.route('/add_menu', methods=['GET', 'POST'])
 def add_menu():

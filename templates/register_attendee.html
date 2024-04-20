@@ -8,11 +8,6 @@
 <body>
     <h1>Attendee Event Registration</h1>
     <form action="/register_attendee" method="post">
-        <!-- Commented out if Attendee_ID is auto-generated
-        <label for="attendee_id">Attendee ID:</label>
-        <input type="number" id="attendee_id" name="attendee_id" required><br><br>
-        -->
-
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br><br>
 
@@ -30,5 +25,16 @@
 
         <input type="submit" value="Register">
     </form>
+
+    <script type="text/javascript">
+        window.onload = function() {
+            // Get the URL parameters
+            var params = new URLSearchParams(window.location.search);
+            var event_id = params.get('event_id'); // Get event_id from URL
+            if (event_id) {
+                document.getElementById('event_id').value = event_id; // Set the value in the form
+            }
+        };
+    </script>
 </body>
 </html>
