@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Truck Review</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Submit Review for Truck ID: {{ truck_id }} at Event ID: {{ event_id }}</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea class="form-control" id="comments" name="comments" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating (1-5):</label>
+                <input type="number" class="form-control" id="rating" name="rating" required min="1" max="5">
+            </div>
+            <div class="form-group">
+                <label for="attendee_id">Attendee ID (Your ID: {{ session['user_id'] }}):</label>
+                <input type="text" class="form-control" id="attendee_id" name="attendee_id" value="{{ session['user_id'] }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="truck_id">Truck ID:</label>
+                <input type="text" class="form-control" id="truck_id" name="truck_id" value="{{ truck_id }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="event_id">Event ID:</label>
+                <input type="text" class="form-control" id="event_id" name="event_id" value="{{ event_id }}" readonly>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

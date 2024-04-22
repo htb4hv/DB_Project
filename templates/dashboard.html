@@ -30,12 +30,36 @@
             color: white;
             transition: background-color 0.3s ease-in-out;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+        .header a {
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .header a:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>Welcome, {{ session['username'] }}! Your UserID is: {{ session['user_id'] }}</h1>
+        <div class="header-right">
+            <a href="/" class="btn btn-info">Home</a>
+        </div>
+    </div>
     <div class="container">
-        <h1>Welcome, {{ session['username'] }}!</h1>
-
         {% if session['role'] == 'Food Truck Owner' %}
             <h2>Food Truck Owner Dashboard</h2>
             <ul class="dashboard-menu">

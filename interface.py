@@ -87,8 +87,8 @@ def add_user():
         cursor = conn.cursor()
 
         # Call the add_entry function to add the new user to the database
-        db.clear_tables(conn, cursor)
-        db.create_tables(conn, cursor)
+        #db.clear_tables(conn, cursor)
+        #db.create_tables(conn, cursor)
         db.add_entry(conn, cursor, 'User_Accounts', {'Username': username, 'Password': hashed_password, 'User_Type': user_type})
         db.describe_and_count_all_tables(cursor)
         db.print_all_tables_data(cursor)
@@ -219,6 +219,41 @@ def register_attendee():
     # Load the registration form
     return render_template('register_attendee.html')
 
+@app.route('/event_details')
+def event_details():
+    event_id = request.args.get('event_id')
+    if not event_id:
+        flash('No event specified.', 'error')
+        return redirect(url_for('home'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Fetch event details
+    cursor.execute('SELECT Name, Location, Date, Contact_Info FROM Event WHERE Event_ID = %s', (event_id,))
+    event = cursor.fetchone()
+
+    # Fetch food trucks attending this event
+    cursor.execute('SELECT Truck_ID, Name, Cuisine_Type FROM Food_Truck WHERE Event_ID = %s', (event_id,))
+    food_trucks = cursor.fetchall()
+
+    # Fetch menus and reviews for each food truck
+    menus = {}
+    reviews = {}
+    for truck in food_trucks:
+        cursor.execute('SELECT Menu_ID, Item_Name, Price FROM Menu WHERE Truck_ID = %s', (truck[0],))
+        menus[truck[1]] = cursor.fetchall()  # Using truck name as key
+
+        # Fetch reviews for each truck
+        cursor.execute('SELECT Comments, Rating FROM Feedback_Ratings WHERE Truck_ID = %s', (truck[0],))
+        reviews[truck[1]] = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Make sure to pass event_id to the template
+    return render_template('event_details.html', event=event, food_trucks=food_trucks, menus=menus, reviews=reviews, event_id=event_id)
+
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
@@ -295,6 +330,33 @@ def add_menu():
 
 
     return render_template('add_menu.html')
+
+@app.route('/submit_truck_review/<int:truck_id>/<int:event_id>', methods=['GET', 'POST'])
+def submit_truck_review(truck_id, event_id):
+    if 'role' not in session or session['role'] != 'Attendee':
+        flash('You must be logged in as an attendee to review trucks.', 'error')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        comments = request.form['comments']
+        rating = request.form['rating']
+        attendee_id = request.form['attendee_id']  # This should match session['user_id'], could double-check for security
+        truck_id = request.form['truck_id']        # Passed via hidden form field
+        event_id = request.form['event_id']        # Passed via hidden form field
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO Feedback_Ratings (Comments, Rating, Attendee_ID, Truck_ID, Event_ID) VALUES (%s, %s, %s, %s, %s)',
+            (comments, rating, attendee_id, truck_id, event_id)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash('Your review has been submitted.', 'success')
+        return redirect(url_for('event_details', event_id=event_id))
+
+    return render_template('submit_truck_review.html', truck_id=truck_id, event_id=event_id)
 
 @app.route('/edit_menu_item', methods=['GET', 'POST'])
 def edit_menu_item_details():

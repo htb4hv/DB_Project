@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Event Details</h1>
+        {% if event %}
+            <h2>{{ event[0] }} at {{ event[2].strftime('%Y-%m-%d') }} (Event ID: {{ event_id }})</h2>
+            <p>Location: {{ event[1] }}</p>
+            <p>Contact Info: {{ event[3] }}</p>
+
+            <h3>Food Trucks Attending:</h3>
+            {% for truck in food_trucks %}
+                <div>
+                    <h4>{{ truck[1] }} - {{ truck[2] }} (Truck ID: {{ truck[0] }})</h4>
+                    <ul>
+                        {% for item in menus[truck[1]] %}
+                            <li>{{ item[1] }} - ${{ item[2] }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if reviews[truck[1]] %}
+                        <h5>Reviews:</h5>
+                        <ul>
+                            {% for review in reviews[truck[1]] %}
+                                <li>"{{ review[0] }}" - {{ review[1] }} Stars</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No reviews yet.</p>
+                    {% endif %}
+                    {% if session.get('role') == 'Attendee' %}
+                        <a href="{{ url_for('submit_truck_review', truck_id=truck[0], event_id=event_id) }}" class="btn btn-info">Review this Truck</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No details available for this event.</p>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
