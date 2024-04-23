@@ -1,6 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+    body {
+        font-family: Arial, sans-serif; /* Sets a clean and modern font for the page */
+        background-color: #f4f4f4; /* A light grey background for better contrast */
+        padding: 20px; /* Adds padding around the content */
+        color: #333; /* Dark grey color for text */
+    }
+    h1 {
+        color: #0056b3; /* Sets a blue color for headings */
+        text-align: center; /* Centers the heading */
+        margin-bottom: 30px; /* Adds space below the heading */
+    }
+    form {
+        background: white; /* White background for the form */
+        padding: 20px; /* Padding inside the form */
+        border-radius: 8px; /* Rounded corners for the form */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow for 3D effect */
+        max-width: 400px; /* Maximum width of the form */
+        margin: auto; /* Centers the form horizontally */
+    }
+    label {
+        font-weight: bold; /* Makes labels bold */
+        margin-bottom: 5px; /* Space below the label */
+        display: block; /* Makes the label a block to take its own line */
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    select {
+        width: 100%; /* Makes input fields take up 100% of form width */
+        padding: 8px; /* Adds padding inside the input fields */
+        margin-bottom: 15px; /* Adds margin below each input field */
+        border: 1px solid #ccc; /* Adds a border to the input fields */
+        border-radius: 4px; /* Rounds the corners of the input fields */
+    }
+    input[type="submit"] {
+        background-color: #0056b3; /* Blue background color for the submit button */
+        color: white; /* White text color for the submit button */
+        border: none; /* No border for a cleaner look */
+        padding: 10px 20px; /* Padding inside the button */
+        border-radius: 4px; /* Rounded corners for the button */
+        cursor: pointer; /* Pointer cursor on hover */
+        width: 100%; /* Full width button */
+    }
+    input[type="submit"]:hover {
+        background-color: #004494; /* Darker blue on hover for button */
+    }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Truck Details</title>

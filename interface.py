@@ -94,7 +94,7 @@ def add_user():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     return render_template('add_user.html')
 
@@ -185,7 +185,7 @@ def register_truck():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
 
     # Load the registration form
@@ -214,7 +214,7 @@ def register_attendee():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     # Load the registration form
     return render_template('register_attendee.html')
@@ -273,9 +273,30 @@ def create_event():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     return render_template('create_events.html')
+
+@app.route('/delete_event/<int:event_id>', methods=['POST'])
+def delete_event(event_id):
+    if 'role' not in session or session['role'] != 'Event Manager':
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('home'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('DELETE FROM Event WHERE Event_ID = %s', (event_id,))
+        conn.commit()
+        flash('Event deleted successfully.', 'success')
+    except Exception as e:
+        conn.rollback()
+        flash('Error deleting event.', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('home'))
 
 
 @app.route('/submit_feedback', methods=['GET', 'POST'])
@@ -303,7 +324,7 @@ def submit_feedback():
         cursor.close()
         conn.close()
         flash('Feedback submitted successfully!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('home'))
 
     # Load the feedback form
     return render_template('feedback.html')
@@ -326,7 +347,7 @@ def add_menu():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
 
     return render_template('add_menu.html')
@@ -375,7 +396,7 @@ def edit_menu_item_details():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     return render_template('edit_menu_item.html')
 
@@ -397,7 +418,7 @@ def food_truck_details():
         db.print_all_tables_data(cursor)
         cursor.close()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     return render_template('food_truck_details.html')
 
