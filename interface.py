@@ -191,6 +191,13 @@ def register_truck():
     # Load the registration form
     return render_template('register_truck.html')
 
+@app.route('/logout')
+def logout():
+    # Clear all data stored in session
+    session.clear()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('home'))  # Redirect to home or login page
+
 # Route for attendee registration for an event
 @app.route('/register_attendee', methods=['GET', 'POST'])
 def register_attendee():
@@ -399,6 +406,57 @@ def edit_menu_item_details():
         return redirect(url_for('home'))
 
     return render_template('edit_menu_item.html')
+
+@app.route('/view_menu_details')
+def view_menu_details():
+    truck_id = request.args.get('truck_id')
+    if not truck_id:
+        flash('Food truck ID is required.', 'error')
+        return redirect(url_for('event_details'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Execute the updated query to join Menu and Menu_Items tables
+    cursor.execute('''
+        SELECT m.Item_Name, mi.Description, mi.Dietary_Info, m.Price
+        FROM Menu m
+        JOIN Menu_Items mi ON m.Menu_ID = mi.Menu_ID
+        WHERE m.Truck_ID = %s
+    ''', (truck_id,))
+    menu_details = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    if not menu_details:
+        flash('No menu details found for this truck.', 'error')
+        return redirect(url_for('event_details'))
+
+    return render_template('view_menu_details.html', menu_details=menu_details, truck_id=truck_id)
+
+@app.route('/view_food_truck_details')
+def view_food_truck_details():
+    truck_id = request.args.get('truck_id')
+    if not truck_id:
+        flash('Food truck ID is required.', 'error')
+        return redirect(url_for('event_details'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Fetch food truck details
+    cursor.execute('SELECT Truck_ID, Owner_Details, Operational_Hours FROM Food_Truck_Details WHERE Truck_ID = %s', (truck_id,))
+    truck_details = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not truck_details:
+        flash('No details found for the specified food truck.', 'error')
+        return redirect(url_for('event_details'))
+
+    return render_template('view_food_truck_details.html', truck_details=truck_details)
 
 
 @app.route('/food_truck_details', methods=['GET', 'POST'])

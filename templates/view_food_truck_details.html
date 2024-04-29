@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Food Truck Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background: white;
+            max-width: 600px;
+            padding: 20px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Food Truck Details</h1>
+        {% if truck_details %}
+            <div>
+                <h2>Truck ID: {{ truck_details[0] }}</h2>
+                <p><strong>Owner Details:</strong> {{ truck_details[1] }}</p>
+                <p><strong>Operational Hours:</strong> {{ truck_details[2] }}</p>
+            </div>
+        {% else %}
+            <p>No details available for this truck.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

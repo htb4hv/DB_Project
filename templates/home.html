@@ -6,26 +6,32 @@
     <title>Homepage - Event Listings</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #f8f9fa;
-        }
-        .header-right {
-            display: flex;
-            gap: 10px;
-        }
+    .header {
+        display: flex;
+        justify-content: space-between; /* Aligns children (logo and buttons) on opposite ends */
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f8f9fa;
+    }
+    .header-right {
+        display: flex;
+        gap: 10px; /* Maintains space between buttons */
+    }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Upcoming Events</h1>
-        <div class="header-right">
+    <h1>Upcoming Events</h1>
+    <div class="header-right">
+        {% if 'user_id' in session %}
+            <!-- Logout Button is shown only when the user is logged in -->
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        {% else %}
+            <!-- Register and Login Buttons are shown when no user is logged in -->
             <a href="/add_user" class="btn btn-outline-primary">Register User</a>
             <a href="/login" class="btn btn-outline-secondary">Login</a>
-        </div>
+        {% endif %}
+    </div>
     </div>
     <div class="container">
         <div class="row">

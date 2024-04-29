@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Details</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            color: #333;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        li:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        p {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .menu-item {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .menu-item strong {
+            color: #007BFF;
+            font-weight: bold;
+        }
+        .menu-item span {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Menu Details</h1>
+        {% if menu_details %}
+            <ul>
+                {% for item in menu_details %}
+                    <li class="menu-item">
+                        <strong>Name:</strong> <span>{{ item[0] }}</span>,
+                        <strong>Description:</strong> <span>{{ item[1] }}</span>,
+                        <strong>Dietary Info:</strong> <span>{{ item[2] }}</span>,
+                        <strong>Price:</strong> <span>${{ "%.2f"|format(item[3]) }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No menu details available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
