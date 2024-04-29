@@ -64,9 +64,9 @@
             <h2>Food Truck Owner Dashboard</h2>
             <ul class="dashboard-menu">
                 <li><a href="{{ url_for('register_truck') }}" class="btn btn-primary btn-block">Register a Truck</a></li>
-                <li><a href="{{ url_for('add_menu') }}" class="btn btn-primary btn-block">Add Menu</a></li>
-                <li><a href="{{ url_for('edit_menu_item_details') }}" class="btn btn-primary btn-block">Edit Menu</a></li>
                 <li><a href="{{ url_for('food_truck_details') }}" class="btn btn-primary btn-block">Add Food Truck Details</a></li>
+                <li><a href="{{ url_for('add_menu') }}" class="btn btn-primary btn-block">Add Menu Item</a></li>
+                <li><a href="{{ url_for('edit_menu_item_details') }}" class="btn btn-primary btn-block">Edit Menu Description</a></li>
             </ul>
         {% elif session['role'] == 'Attendee' %}
             <h2>Attendee Dashboard</h2>

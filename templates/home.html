@@ -25,6 +25,7 @@
     <div class="header-right">
         {% if 'user_id' in session %}
             <!-- Logout Button is shown only when the user is logged in -->
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">Dashboard</a>
             <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
         {% else %}
             <!-- Register and Login Buttons are shown when no user is logged in -->

@@ -4,10 +4,11 @@ from datetime import datetime
 import mysql.connector
 from mysql.connector import Error
 import database as db
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = 'Database_Project_2024'  # Needed for session management
-
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Set session timeout
 
 
 def get_db_connection():

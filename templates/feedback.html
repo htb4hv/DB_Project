@@ -1,6 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+    body {
+        font-family: Arial, sans-serif; /* Sets a clean and modern font for the page */
+        background-color: #f4f4f4; /* Light grey background for contrast */
+        padding: 20px; /* Adds padding around the content */
+        color: #333; /* Dark grey color for text */
+    }
+    h1 {
+        color: #0056b3; /* Blue color for headings */
+        text-align: center; /* Center the heading */
+        margin-bottom: 30px; /* Space below the heading */
+    }
+    form {
+        background: white; /* White background for the form */
+        padding: 20px; /* Padding inside the form */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        max-width: 500px; /* Maximum width of the form */
+        margin: auto; /* Center the form horizontally */
+    }
+    label {
+        font-weight: bold; /* Bold labels */
+        margin-bottom: 5px; /* Space below the label */
+        display: block; /* Labels are block elements */
+    }
+    textarea,
+    input[type="number"] {
+        width: 100%; /* Full width for input fields */
+        padding: 8px; /* Padding inside the fields */
+        margin-bottom: 15px; /* Margin below each field */
+        border: 1px solid #ccc; /* Light border */
+        border-radius: 4px; /* Rounded corners */
+    }
+    input[type="submit"] {
+        background-color: #0056b3; /* Blue background for the submit button */
+        color: white; /* White text */
+        border: none; /* No border for the button */
+        padding: 10px 20px; /* Padding inside the button */
+        border-radius: 4px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+        width: 100%; /* Full width for the button */
+    }
+    input[type="submit"]:hover {
+        background-color: #004494; /* Darker blue on hover */
+    }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Feedback</title>
@@ -9,26 +55,36 @@
     <h1>Submit Feedback</h1>
     <form action="/submit_feedback" method="post">
         <!-- Comments -->
-        <label for="comments">Comments:</label>
-        <textarea id="comments" name="comments" required></textarea><br><br>
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" required></textarea>
+        </div>
 
         <!-- Rating -->
-        <label for="rating">Rating (1-5):</label>
-        <input type="number" id="rating" name="rating" min="1" max="5" required><br><br>
+        <div class="form-group">
+            <label for="rating">Rating (1-5):</label>
+            <input type="number" id="rating" name="rating" min="1" max="5" required>
+        </div>
 
         <!-- Attendee ID -->
-        <label for="attendee_id">Attendee ID:</label>
-        <input type="number" id="attendee_id" name="attendee_id" required><br><br>
+        <div class="form-group">
+            <label for="attendee_id">Attendee ID:</label>
+            <input type="number" id="attendee_id" name="attendee_id" required>
+        </div>
 
         <!-- Truck ID -->
-        <label for="truck_id">Truck ID:</label>
-        <input type="number" id="truck_id" name="truck_id" required><br><br>
+        <div class="form-group">
+            <label for="truck_id">Truck ID:</label>
+            <input type="number" id="truck_id" name="truck_id" required>
+        </div>
 
         <!-- Event ID -->
-        <label for="event_id">Event ID:</label>
-        <input type="number" id="event_id" name="event_id" required><br><br>
+        <div class="form-group">
+            <label for="event_id">Event ID:</label>
+            <input type="number" id="event_id" name="event_id" required>
+        </div>
 
-        <input type="submit" value="Submit Feedback">
+        <input type="submit" class="btn btn-primary" value="Submit Feedback">
     </form>
 </body>
 </html>
