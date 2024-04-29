@@ -28,7 +28,7 @@ def get_db_connection():
 def home():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT Event_ID, Name, Location, Date, Contact_Info FROM Event')
+    cursor.execute('SELECT Event_ID, Name, Location, Date, Contact_Info FROM Event ORDER BY Date ASC')
     raw_events = cursor.fetchall()
     events = [
         (event[0], event[1], event[2], event[3].strftime('%Y-%m-%d'), event[4]) if isinstance(event[3], datetime) else event
@@ -93,6 +93,23 @@ def add_user():
         db.add_entry(conn, cursor, 'User_Accounts', {'Username': username, 'Password': hashed_password, 'User_Type': user_type})
         db.describe_and_count_all_tables(cursor)
         db.print_all_tables_data(cursor)
+
+        # If the user type is 'Event Manager', grant additional permissions
+        if user_type == 'Event Manager':
+            grant_command = """
+                GRANT SELECT, INSERT, UPDATE, DELETE ON Event TO :username;
+                """
+            try:
+                cursor.execute(grant_command, {'username': username})  # Execute the grant command
+                conn.commit()  # Commit the transaction
+                flash(f"User '{username}' added and granted Event Manager permissions.", 'success')
+            except Exception as e:
+                conn.rollback()  # Roll back on error
+                flash(f"Error granting permissions to '{username}': {e}", 'error')
+
+        cursor.close()
+        conn.close()
+
         cursor.close()
         conn.close()
         return redirect(url_for('home'))
